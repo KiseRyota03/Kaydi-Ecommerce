@@ -37,10 +37,8 @@ export const createVoucher = async (req, res, next) => {
 
 export const getAllVouchers = async (req, res, next) => {
   const userId = req.params.userId;
-  if (req.user.id !== userId) {
-    return res
-      .status(401)
-      .json({ message: "You are not admin to perform this action" });
+  if (req.user.id !== userId || !req.user.isAdmin) {
+    return res.status(401).json({ message: "You are not admin" });
   }
   try {
     const vouchers = await Voucher.find();

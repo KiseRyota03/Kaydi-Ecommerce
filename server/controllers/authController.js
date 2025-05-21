@@ -104,7 +104,10 @@ export const signIn = async (req, res, next) => {
       })
       .json(rest);
   } catch (error) {
-    next(error);
+    console.error("🔥 signIn error:", error); // Add this line
+    return res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 };
 
@@ -229,12 +232,12 @@ export const google = async (req, res, next) => {
 export const refreshToken = async (req, res, next) => {
   const token = req.cookies.refresh_token;
   if (!token) {
-    return res.status(403).json({ message: "Refresh token is missing" });
+    return res.status(404).json({ message: "Refresh token is missing" });
   }
 
   jwt.verify(token, process.env.JWT_REFRESH_SECRET, (err, user) => {
     if (err) {
-      return res.status(403).json({ message: "Invalid refresh token" });
+      return res.status(404).json({ message: "Invalid refresh token" });
     }
 
     // Generate a new access token

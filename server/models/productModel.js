@@ -8,7 +8,7 @@ const productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
     price: {
       type: Number,
@@ -18,18 +18,19 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    categories: [
-      {
-        type: String,
-        required: true,
-      },
-    ],
     sizes: [
       {
         type: String,
         required: true,
       },
     ],
+    categories: [
+      {
+        type: String,
+        required: false,
+      },
+    ],
+
     colors: [
       {
         type: String,

@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export const createOrder = async (req, res, next) => {
-  if (!req.user.id) {
+  if (!req.user || !req.user.id) {
     return res.status(401).json({ message: "You are not logged in" });
   }
   const {
@@ -58,7 +58,10 @@ export const createOrder = async (req, res, next) => {
     await newOrder.save();
     res.status(200).json(newOrder);
   } catch (error) {
-    next(error);
+    console.error("❌ Failed to create order:", error.message, error.stack);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 
@@ -256,7 +259,7 @@ export const getOrderById = async (req, res, next) => {
   }
   try {
     const findOrder = await Order.findById(orderId).populate("userId products");
-    if (findOrder.length === 0) {
+    if (!findOrder) {
       return res.status(404).json({ message: "Order not found" });
     }
     res.status(200).json(findOrder);

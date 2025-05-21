@@ -4,11 +4,13 @@ import Product from "../models/productModel.js";
 
 export const addToCart = async (req, res, next) => {
   const { userId, productId, quantity, color, size } = req.body;
+
   if (req.user.id !== userId) {
-    return res
-      .status(401)
-      .json({ message: "You are not allowed to add this product to cart" });
+    return res.status(401).json({
+      message: "You are not allowed to add this product to cart",
+    });
   }
+
   try {
     let cart = await Cart.findOne({ userId });
     if (!cart) {
@@ -20,7 +22,6 @@ export const addToCart = async (req, res, next) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    // Check if the product with the same color and size already exists in the cart
     const productIndex = cart.products.findIndex(
       (item) =>
         item.productId.toString() === productId &&
@@ -29,10 +30,8 @@ export const addToCart = async (req, res, next) => {
     );
 
     if (productIndex !== -1) {
-      // If the product with the same color and size exists, increase the quantity
       cart.products[productIndex].quantity += quantity;
     } else {
-      // if product does not exist, add it to the cart
       cart.products.push({
         productId,
         name: product.name,
@@ -43,16 +42,19 @@ export const addToCart = async (req, res, next) => {
         image: product.listingPhotoPaths[0],
       });
     }
-    // update the subtotal
+
     cart.subtotal = cart.products.reduce(
       (total, item) => total + item.quantity * item.price,
       0
     );
 
     const updatedCart = await cart.save();
-    res.status(200).json(updatedCart);
+    return res.status(200).json(updatedCart);
   } catch (error) {
-    next(error);
+    console.error("🔥 addToCart failed:", error); // ✅ ADD THIS LINE
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 };
 

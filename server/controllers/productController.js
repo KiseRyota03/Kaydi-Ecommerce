@@ -165,7 +165,7 @@ export const getEachProduct = async (req, res, next) => {
   const { productId } = req.params;
   try {
     const findProduct = await Product.findById(productId);
-    if (findProduct.length === 0) {
+    if (!findProduct) {
       return res.status(404).json({ message: "No product found!" });
     }
     res.status(200).json(findProduct);

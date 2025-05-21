@@ -8,6 +8,11 @@
     "dev": "nodemon server/index.js",
     "start": "node server/index.js"
   },
+  "jest": {
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -27,6 +32,12 @@
     "nodemon": "^3.1.4",
     "pusher": "^5.2.0",
     "pusher-js": "^8.4.0-rc2",
+    "server": "file:",
     "stripe": "^16.7.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
+    "supertest": "^7.1.1"
   }
 }
